@@ -39,7 +39,7 @@ class TeleopWASD(Node):
         self.keymap = {'w': 'f', 'a': 'l', 's': 'b', 'd': 'r'}
 
         self.active_key = None  # Currently pressed key (None if no key)
-        self.count = 60          # Counter for incremental message (0..50)
+        self.count = 120          # Counter for incremental message (0..50)
         self.lock = threading.Lock()  # Lock to safely handle shared variables
 
         # Start a separate thread to read keyboard input continuously
@@ -48,7 +48,7 @@ class TeleopWASD(Node):
         self.kthread.start()
 
         # Timer callback: calls self._tick() every 0.1 seconds (10Hz)
-        self.timer = self.create_timer(0.01, self._tick)
+        self.timer = self.create_timer(1, self._tick)
 
     def _read_keys(self):
         """
@@ -71,7 +71,7 @@ class TeleopWASD(Node):
                         self.get_logger().info(f'Sent: {msg.data}')  # Log message
                     elif c in self.keymap:  # If W/A/S/D pressed
                         self.active_key = c  # Set active key
-                        self.count = 20       # Reset counter for new key
+                        self.count = 120      # Reset counter for new key
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old)  # Restore terminal settings
 
@@ -81,7 +81,7 @@ class TeleopWASD(Node):
         Publishes incremental command messages while a key is active.
         """
         with self.lock:  # Lock to safely access active_key and count
-            if self.active_key and self.active_key in self.keymap and self.count <= 80:
+            if self.active_key and self.active_key in self.keymap and self.count <= 120:
                 msg = String()
                 # Create message like 'f0', 'f1', ..., 'f50'
                 msg.data = f"{self.keymap[self.active_key]}{self.count}"
