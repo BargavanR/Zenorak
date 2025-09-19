@@ -1,5 +1,6 @@
-<robot name="zenorak">
-    <xacro:include filename="ros2_control.xacro" />
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="zenorak">
+
     <link name="base_link">
         <inertial>
             <origin xyz="0.00169935610472678 -0.0264088300158522 -0.00887384287152697" rpy="0 0 0" />
@@ -134,4 +135,32 @@
         <child link="rear_right_wheel" />
         <axis xyz="0 0 1" />
     </joint>
+    <ros2_control name="zenorak_control" type="system">
+        <hardware>
+            <plugin>diffdrive_arduino/DiffDriveArduinoHardware</plugin>
+            <param name="left_wheel_name">front_left_wheel</param>
+            <param name="right_wheel_name">front_right_wheel</param>
+            <param name="loop_rate">30</param>
+            <param name="device">/dev/ttyACM0</param>
+            <param name="baud_rate">57600</param>
+            <param name="timeout_ms">1000</param>
+            <param name="enc_counts_per_rev">3436</param>
+        </hardware>
+        <joint name="front_left_wheel">
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+        </joint>
+        <joint name="front_right_wheel">
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+        </joint>
+    </ros2_control>
 </robot>
