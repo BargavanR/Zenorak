@@ -1,148 +1,98 @@
-/******************************************************************************
- * Filename: firmware_arduino.cpp
- * Description: Arduino firmware to control a 4-motor robot using the Cytron 
- *              motor driver. Commands are received via Serial and executed 
- *              in a non-blocking way.
- * Author: Your Name
- * Date: YYYY-MM-DD
- ******************************************************************************/
-
 #include <Arduino.h>
-#include "CytronMotorDriver.h" // Include the library for Cytron motor drivers
+#include "CytronMotorDriver.h"
 
-// ==================== Motor Objects ====================
-// Create four CytronMD objects for controlling 4 motors in PWM_DIR mode.
-// PWM_DIR mode: one pin for PWM speed control, one pin for direction.
-CytronMD motor1(PWM_DIR, 3, 2);  // Motor 1 on PWM=3, DIR=2
-CytronMD motor2(PWM_DIR, 5, 4);  // Motor 2 on PWM=5, DIR=4
-CytronMD motor3(PWM_DIR, 6, 7);  // Motor 3 on PWM=6, DIR=7
-CytronMD motor4(PWM_DIR, 9, 8);  // Motor 4 on PWM=9, DIR=8
+// Create Cytron Motor Objects (PWM_DIR, PWM, DIR)
+CytronMD motor1(PWM_DIR, 3,  2); // Left motor 1
+CytronMD motor2(PWM_DIR, 5, 4); // Left motor 2
+CytronMD motor3(PWM_DIR, 6, 7); // Right motor 1
+CytronMD motor4(PWM_DIR, 9, 8); // Right motor 2
 
-// ==================== Serial Command Buffer ====================
-// We will read commands sent over Serial into a char buffer
-#define CMD_BUFFER_SIZE 40          // Maximum command length
-char inputBuffer[CMD_BUFFER_SIZE];  // Stores incoming command characters
-byte bufferIndex = 0;               // Tracks position in buffer
-
-// ==================== Variables ====================
-char lastAction = 's';  // Stores last motor action (f/b/l/r/e/q/s)
-int lastSpeed = 0;      // Stores last speed value
-
-// ==================== Motor Control Functions ====================
-// Each function controls the 4 motors according to the desired motion.
-// speed ranges from 0 (stop) to 255 (full speed). Negative speeds reverse motor direction.
-
-void forward(int speed) {
-  motor1.setSpeed(-speed); // Reverse because of motor orientation
-  motor2.setSpeed(-speed);
-  motor3.setSpeed(-speed);
-  motor4.setSpeed(speed);
+void setup() {
+  Serial.begin(57600);  // Baud rate for serial communication
+  Serial.println("Motor Control Ready!");
 }
 
-void backward(int speed) {
-  motor1.setSpeed(speed);
-  motor2.setSpeed(speed);
-  motor3.setSpeed(speed);
-  motor4.setSpeed(-speed);
+void forward(int leftSpeed, int rightSpeed) {
+  motor1.setSpeed(-leftSpeed);
+  motor2.setSpeed(-leftSpeed);
+  motor3.setSpeed(-rightSpeed);
+  motor4.setSpeed(rightSpeed);
 }
 
-void left(int speed) {
-  // Reduce power on two motors for smoother turning
-  motor1.setSpeed((-speed)/4);
-  motor2.setSpeed((-speed)/4);
-  motor3.setSpeed(-speed);
-  motor4.setSpeed(speed);
-}
-
-void right(int speed) {
-  // Reduce power on two motors for smoother turning
-  motor1.setSpeed(-speed);
-  motor2.setSpeed(-speed);
-  motor3.setSpeed((-speed)/4);
-  motor4.setSpeed((speed)/4);
-}
-
-void spinLeft(int speed) {
-  // Spin robot in place to left by setting opposite motor directions
-  motor1.setSpeed(-speed);
-  motor2.setSpeed(speed);
-  motor3.setSpeed(-speed);
-  motor4.setSpeed(speed);
-}
-
-void spinRight(int speed) {
-  // Spin robot in place to right
-  motor1.setSpeed(speed);
-  motor2.setSpeed(-speed);
-  motor3.setSpeed(speed);
-  motor4.setSpeed(-speed);
+void backward(int leftSpeed, int rightSpeed) {
+  motor1.setSpeed(leftSpeed);
+  motor2.setSpeed(leftSpeed);
+  motor3.setSpeed(rightSpeed);
+  motor4.setSpeed(-rightSpeed);
 }
 
 void stopMotors() {
-  // Immediately stop all motors
   motor1.setSpeed(0);
   motor2.setSpeed(0);
   motor3.setSpeed(0);
   motor4.setSpeed(0);
 }
 
-// ==================== Command Processor ====================
-// This function processes a command received from Serial.
-// Command format: <action><speed> e.g., "f120" -> move forward at speed 120
-void processCommand(const char *cmd) {
-  if (strlen(cmd) < 2) return;  // Ignore invalid or empty commands
-
-  char action = cmd[0];          // First character determines action
-  int speed = atoi(cmd + 1);     // Convert remaining characters to integer speed
-  speed = constrain(speed, 0, 255); // Ensure speed is within valid range
-
-  // Skip repeated commands (optimization)
-  if (action == lastAction && speed == lastSpeed) return;
-
-  // Execute the motor command based on action
-  switch (action) {
-    case 'f': forward(speed); break;
-    case 'b': backward(speed); break;
-    case 'l': left(speed); break;
-    case 'r': right(speed); break;
-    case 'e': spinLeft(speed); break;
-    case 'q': spinRight(speed); break;
-    case 's': stopMotors(); break;
-    default: return; // Ignore unknown commands
-  }
-
-  // Update last command values for next iteration
-  lastAction = action;
-  lastSpeed = speed;
-
-  // Print to Serial for debugging
-  Serial.print("Executed: ");
-  Serial.println(cmd);
-}
-
-// ==================== Setup ====================
-// Runs once when Arduino starts
-void setup() {
-  Serial.begin(115200);  // Initialize Serial communication at 115200 baud
-  stopMotors();          // Ensure all motors are stopped initially
-  Serial.println("Motor Control Ready (Non-blocking)!");
-}
-
-// ==================== Loop ====================
-// Continuously checks for Serial input and executes commands
 void loop() {
-  while (Serial.available() > 0) { // While there is Serial data
-    char c = Serial.read();        // Read one character
+  static String input = "";
 
-    if (c == '\n') {               // Command terminated by newline
-      inputBuffer[bufferIndex] = '\0'; // Null-terminate buffer
-      processCommand(inputBuffer);      // Execute the command
-      bufferIndex = 0;                  // Reset buffer index
-    } 
-    else if (c != '\r') {           // Ignore carriage return
-      if (bufferIndex < CMD_BUFFER_SIZE - 1) { // Prevent buffer overflow
-        inputBuffer[bufferIndex++] = c;       // Add character to buffer
+  // Read characters as they arrive
+  while (Serial.available()) {
+    char ch = Serial.read();
+
+    // If newline or carriage return received, process the command
+    if (ch == '\n' || ch == '\r') {
+      input.trim();  // Remove leading/trailing spaces
+
+      if (input.length() > 0) {
+        // Parse the first character for command type ('m' or 'e')
+        char commandType = input.charAt(0);
+
+        // Remove the first character and trim any spaces
+        input = input.substring(1);
+        input.trim();
+
+        int leftSpeed = 0, rightSpeed = 0;
+        int parsed = sscanf(input.c_str(), "%d %d", &leftSpeed, &rightSpeed);
+
+        // Check if two speeds were parsed successfully
+        if (parsed == 2) {
+          // Constrain speeds to the valid range (-255 to 255)
+          leftSpeed = constrain(leftSpeed, -255, 255);
+          rightSpeed = constrain(rightSpeed, -255, 255);
+
+          // Execute the appropriate action based on the command type
+          switch (commandType) {
+            case 'm':  // Move forward/backward
+              forward(leftSpeed, rightSpeed);
+              break;
+            case 'e':  // Spin left/right
+              if (leftSpeed > 0 && rightSpeed > 0) {
+                forward(leftSpeed, rightSpeed); // Forward movement
+              } else if (leftSpeed < 0 && rightSpeed < 0) {
+                backward(leftSpeed, rightSpeed); // Backward movement
+              }
+              break;
+            default:
+              stopMotors();
+              break;
+          }
+
+          // Send back the parsed values via Serial for debugging
+          Serial.print("Parsed Successfully! ");
+          Serial.print("Left speed (l): ");
+          Serial.print(leftSpeed);
+          Serial.print(" Right speed (r): ");
+          Serial.println(rightSpeed);
+        } else {
+          // If parsing fails, send an error message
+          Serial.println("Invalid command format! Please provide two speed values.");
+        }
       }
+
+      input = "";  // Clear input buffer for the next command
+    } else {
+      input += ch;  // Build the input string character by character
     }
   }
 }
