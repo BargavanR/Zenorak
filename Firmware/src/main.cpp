@@ -13,16 +13,16 @@ void setup() {
 }
 
 void forward(int leftSpeed, int rightSpeed) {
-  motor1.setSpeed(-leftSpeed);
-  motor2.setSpeed(-leftSpeed);
-  motor3.setSpeed(-rightSpeed);
+  motor1.setSpeed(leftSpeed);
+  motor2.setSpeed(leftSpeed);
+  motor3.setSpeed(rightSpeed);
   motor4.setSpeed(rightSpeed);
 }
 
 void backward(int leftSpeed, int rightSpeed) {
-  motor1.setSpeed(leftSpeed);
-  motor2.setSpeed(leftSpeed);
-  motor3.setSpeed(rightSpeed);
+  motor1.setSpeed(-leftSpeed);
+  motor2.setSpeed(-leftSpeed);
+  motor3.setSpeed(-rightSpeed);
   motor4.setSpeed(-rightSpeed);
 }
 
