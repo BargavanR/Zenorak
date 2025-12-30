@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 30
+    update_rate: 100
     # use_sim_time: true
 
     diff_cont:
@@ -11,12 +11,12 @@ controller_manager:
 
 diff_cont:
   ros__parameters:
-    publish_rate: 50.0
+    publish_rate: 100.0
 
     base_frame_id: base_link
 
-    left_wheel_names: ["front_left_wheel"]
-    right_wheel_names: ["front_right_wheel"]
+    left_wheel_names: ["front_wheel_left"]
+    right_wheel_names: ["front_wheel_right"]
     wheel_separation: 0.40
     wheel_radius: 0.14
 
@@ -65,4 +65,3 @@ diff_cont:
       - velocity # Reports current joint velocities
     command_interfaces: # Interfaces used for sending commands
       - position # Controller sends desired joint positions
-

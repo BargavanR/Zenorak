@@ -12,7 +12,9 @@ from launch.substitutions import LaunchConfiguration, Command
 from launch.actions import DeclareLaunchArgument  
 # Lets us declare user-configurable arguments when launching (not directly used here but imported for flexibility)
 
+# Ensure ParameterValue is available so we can mark parameters as raw strings
 from launch_ros.actions import Node  
+from launch_ros.parameter_descriptions import ParameterValue
 # Describes and launches a ROS 2 node
 
 import xacro  
@@ -30,7 +32,10 @@ def generate_launch_description():
     robot_description_config = xacro.process_file(xacro_file).toxml()
 
     # Store the URDF in a dictionary format for ROS parameters
-    params = {'robot_description': robot_description_config}
+    # Wrap the URDF string in ParameterValue with value_type=str so the launch
+    # system does not attempt to parse the XML as YAML (which causes the
+    # "Unable to parse the value of parameter robot_description as yaml" error).
+    params = {'robot_description': ParameterValue(robot_description_config, value_type=str)}
 
     # Launch the robot_state_publisher node
     # - Publishes the kinematic transforms (TF) and robot description to the rest of ROS

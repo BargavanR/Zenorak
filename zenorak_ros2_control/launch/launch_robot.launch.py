@@ -15,6 +15,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 # Provides a source for a Python-based launch file to be included via IncludeLaunchDescription.
 
 from launch.substitutions import Command
+from launch_ros.parameter_descriptions import ParameterValue
 # Command substitution allows running a shell command and using its output as a launch parameter (like fetching robot_description).
 
 from launch.actions import RegisterEventHandler
@@ -62,15 +63,24 @@ def generate_launch_description():
     # Fetches the 'robot_description' parameter from the running robot_state_publisher node.  
     # This ensures the ros2_control_node has the same URDF currently published.
 
-    controller_params_file = os.path.join(get_package_share_directory(package_name),'config','controller.yaml')
+    controller_params_file = os.path.join(get_package_share_directory(package_name),'config','motor_controller.yaml')
     # Path to the controller YAML file which contains configuration for all controllers (diff drive, joint broadcaster, etc.).
-
+    actuator_controller_params = os.path.join(
+    get_package_share_directory(package_name),
+    'config',
+    'actuator_controller.yaml'
+    )
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[{'robot_description': robot_description},
-                    controller_params_file]
+        parameters=[
+            {'robot_description': ParameterValue(robot_description, value_type=str)},
+            controller_params_file,          # motor controllers
+            actuator_controller_params       # actuator controllers
+        ],
+        output="screen"
     )
+
     # Launch the ros2_control_node with the robot_description and controller parameters.  
     # This node manages all hardware interfaces and controllers for the robot.
 
@@ -107,6 +117,25 @@ def generate_launch_description():
             on_start=[joint_broad_spawner],
         )
     )
+    arm_controller_spawner = Node(
+    package="controller_manager",
+    executable="spawner",
+    arguments=[
+        "arm_trajectory_controller",
+        "--controller-manager",
+        "/controller_manager"
+    ],
+    )
+    delayed_arm_controller_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=controller_manager,
+            on_start=[arm_controller_spawner],
+        )
+    )
+
+
+
+    
     # Ensure the joint state broadcaster is spawned after the ros2_control_node starts, similar to diff_drive_spawner.
 
     # Launch them all!
@@ -116,5 +145,6 @@ def generate_launch_description():
         # twist_mux,  # Optional twist mux node (commented out)
         delayed_controller_manager,  # Launch the ros2_control_node with delay
         delayed_diff_drive_spawner,  # Spawn differential drive controller after ros2_control_node starts
-        delayed_joint_broad_spawner  # Spawn joint state broadcaster after ros2_control_node starts
+        delayed_joint_broad_spawner , # Spawn joint state broadcaster after ros2_control_node starts ,
+        delayed_arm_controller_spawner
     ])
