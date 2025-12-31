@@ -75,30 +75,41 @@ def generate_launch_description():
         'config',
         'joystick.yaml'
     )
-
-    # 1️⃣ Joystick driver
-    joy_node = Node(
-        package='joy',
-        executable='joy_node',
-        parameters=[joy_yaml]
-    )
-
-    # 2️⃣ Base / motor teleop
-    teleop_node = Node(
-        package='teleop_twist_joy',
-        executable='teleop_node',
-        name='teleop_twist_joy',   # IMPORTANT
-        parameters=[joy_yaml],
-        remappings=[('/cmd_vel', '/diff_cont/cmd_vel_unstamped')]
-    )
-
-
-    # # 3️⃣ Arm / manipulator teleop
-    # arm_node = Node(
-    #     package='zenorak_ros2_control',
-    #     executable='joy_control.py',
-    #     output='screen'  # Optional: log joint updates to console
+      joy_teleop = Node(
+            package="joy_teleop",
+            executable="joy_teleop",
+            parameters=[os.path.join(get_package_share_directory("zenorak_ros2_control"), "config", "joy_teleop.yaml"),],
+        )
+    
+        joy_node = Node(
+            package="joy",
+            executable="joy_node",
+            name="joystick",
+            parameters=[os.path.join(get_package_share_directory("zenorak_ros2_control"), "config", "joystick.yaml")]
+        )
+    # # 1️⃣ Joystick driver
+    # joy_node = Node(
+    #     package='joy',
+    #     executable='joy_node',
+    #     parameters=[joy_yaml]
     # )
+
+    # # 2️⃣ Base / motor teleop
+    # teleop_node = Node(
+    #     package='teleop_twist_joy',
+    #     executable='teleop_node',
+    #     name='teleop_twist_joy',   # IMPORTANT
+    #     parameters=[joy_yaml],
+    #     remappings=[('/cmd_vel', '/diff_cont/cmd_vel_unstamped')]
+    # )
+
+
+    # # # 3️⃣ Arm / manipulator teleop
+    # # arm_node = Node(
+    # #     package='zenorak_ros2_control',
+    # #     executable='joy_control.py',
+    # #     output='screen'  # Optional: log joint updates to console
+    # # )
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
