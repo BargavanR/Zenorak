@@ -18,9 +18,12 @@ class ArmSequenceController(Node):
         self.sequence = [
             [0.0, 0.0, 0.0],
             [45.0, 30.0, 0.0],
-            [45.0, 60.0, 80.0]
+            [45.0, 60.0, 80.0],
+            [0.0,60.0,80.0],
+            [0.0,30.0,0.0]
         ]
 
+        
         self.current_step = 0
         self.current_feedback = None
         self.command_sent = False
