@@ -27,4 +27,10 @@ install(
   DESTINATION share/${PROJECT_NAME}
 
 )
+install(
+  PROGRAMS
+    scripts/joy_control.py  # Path to your teleop Python script
+  DESTINATION lib/${PROJECT_NAME}  # ROS 2 expects executables here
+)
+
 ament_package()
