@@ -70,23 +70,23 @@ def generate_launch_description():
     'config',
     'actuator_controller.yaml'
     )
-    joy_yaml = os.path.join(
-        get_package_share_directory('zenorak_ros2_control'),
-        'config',
-        'joystick.yaml'
-    )
-      joy_teleop = Node(
-            package="joy_teleop",
-            executable="joy_teleop",
-            parameters=[os.path.join(get_package_share_directory("zenorak_ros2_control"), "config", "joy_teleop.yaml"),],
-        )
+    # joy_yaml = os.path.join(
+    #     get_package_share_directory('zenorak_ros2_control'),
+    #     'config',
+    #     'joystick.yaml'
+    # )
+    #   joy_teleop = Node(
+    #         package="joy_teleop",
+    #         executable="joy_teleop",
+    #         parameters=[os.path.join(get_package_share_directory("zenorak_ros2_control"), "config", "joy_teleop.yaml"),],
+    #     )
     
-        joy_node = Node(
-            package="joy",
-            executable="joy_node",
-            name="joystick",
-            parameters=[os.path.join(get_package_share_directory("zenorak_ros2_control"), "config", "joystick.yaml")]
-        )
+    #     joy_node = Node(
+    #         package="joy",
+    #         executable="joy_node",
+    #         name="joystick",
+    #         parameters=[os.path.join(get_package_share_directory("zenorak_ros2_control"), "config", "joystick.yaml")]
+    #     )
     # # 1️⃣ Joystick driver
     # joy_node = Node(
     #     package='joy',
@@ -172,7 +172,30 @@ def generate_launch_description():
             on_start=[arm_controller_spawner],
         )
     )
-
+    joy_node = Node(
+        package="joy",
+        executable="joy_node",
+        name="joy_node",
+        parameters=[os.path.join(
+            get_package_share_directory("zenorak_ros2_control"),
+            "config",
+            "joystick.yaml"
+        )],
+    )
+    teleop_node = Node(
+    package="teleop_twist_joy",
+    executable="teleop_node",
+    name="teleop_twist_joy",
+    parameters=[os.path.join(
+        get_package_share_directory("zenorak_ros2_control"),
+        "config",
+        "teleop_twist_joy.yaml"
+    )],
+    remappings=[
+        ('/cmd_vel', '/diff_cont/cmd_vel_unstamped')
+        ]
+    )
+    
 
 
     
@@ -183,11 +206,13 @@ def generate_launch_description():
         rsp,  # Include robot_state_publisher launch
         # joystick,  # Optional joystick input (commented out)
         # twist_mux,  # Optional twist mux node (commented out)
-        joy_node,
-        teleop_node,
+        # joy_node,
+        # teleop_node,
         # arm_node,
         delayed_controller_manager,  # Launch the ros2_control_node with delay
         delayed_diff_drive_spawner,  # Spawn differential drive controller after ros2_control_node starts
         delayed_joint_broad_spawner , # Spawn joint state broadcaster after ros2_control_node starts ,
-        delayed_arm_controller_spawner
+        delayed_arm_controller_spawner,
+        joy_node,
+        teleop_node
     ])
