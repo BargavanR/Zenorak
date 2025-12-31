@@ -173,7 +173,7 @@ def generate_launch_description():
         # twist_mux,  # Optional twist mux node (commented out)
         joy_node,
         teleop_node,
-        arm_node,
+        # arm_node,
         delayed_controller_manager,  # Launch the ros2_control_node with delay
         delayed_diff_drive_spawner,  # Spawn differential drive controller after ros2_control_node starts
         delayed_joint_broad_spawner , # Spawn joint state broadcaster after ros2_control_node starts ,
