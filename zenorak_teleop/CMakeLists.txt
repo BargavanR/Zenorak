@@ -25,12 +25,14 @@ find_package(std_msgs REQUIRED)
 # Required to use standard ROS 2 message types (like std_msgs/String)
 
 # --- Install Python scripts ---
+
 install(
   PROGRAMS
     scripts/zenorak_teleop.py  # Path to your teleop Python script
+    scripts/joy_debug.py
+    scripts/joy_teleop.py 
   DESTINATION lib/${PROJECT_NAME}  # ROS 2 expects executables here
 )
-
 # --- Install launch files (optional) ---
 install(
   DIRECTORY launch  # Path to a folder containing launch files
