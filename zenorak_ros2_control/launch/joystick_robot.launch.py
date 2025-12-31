@@ -92,12 +92,12 @@ def generate_launch_description():
     )
 
 
-    # 3️⃣ Arm / manipulator teleop
-    arm_node = Node(
-        package='zenorak_ros2_control',
-        executable='joy_control.py',
-        output='screen'  # Optional: log joint updates to console
-    )
+    # # 3️⃣ Arm / manipulator teleop
+    # arm_node = Node(
+    #     package='zenorak_ros2_control',
+    #     executable='joy_control.py',
+    #     output='screen'  # Optional: log joint updates to console
+    # )
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
