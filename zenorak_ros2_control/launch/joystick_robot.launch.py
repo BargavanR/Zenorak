@@ -86,7 +86,7 @@ def generate_launch_description():
     # 2️⃣ Base / motor teleop
     teleop_node = Node(
         package='teleop_twist_joy',
-        executable='teleop_twist_joy',
+        executable='teleop_node',
         parameters=[joy_yaml],
         remappings=[('/cmd_vel', '/diff_cont/cmd_vel_unstamped')]
     )
