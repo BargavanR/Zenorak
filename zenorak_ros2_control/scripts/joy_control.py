@@ -17,8 +17,8 @@ class ArmSequenceController(Node):
         # Sequence in DEGREES
         self.sequence = [
             [0.0, 0.0, 0.0],
-            [40.0, 40.0, 0.0],
-            [50.0, 60.0, 80.0]
+            [45.0, 30.0, 0.0],
+            [45.0, 60.0, 80.0]
         ]
 
         self.current_step = 0
