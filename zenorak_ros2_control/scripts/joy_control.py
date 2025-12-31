@@ -12,12 +12,12 @@ class ArmSequenceController(Node):
 
         # ---- CONFIG ----
         self.joints = ['linkk_1', 'link_2', 'link_3']
-        self.tolerance = 5.0  # degrees
+        self.tolerance = 10.0  # degrees
 
         # Sequence in DEGREES
         self.sequence = [
             [0.0, 0.0, 0.0],
-            [50.0, 40.0, 0.0],
+            [40.0, 40.0, 0.0],
             [50.0, 60.0, 80.0]
         ]
 
