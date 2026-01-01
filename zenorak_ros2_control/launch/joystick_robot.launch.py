@@ -195,7 +195,13 @@ def generate_launch_description():
         ('/cmd_vel', '/diff_cont/cmd_vel_unstamped')
         ]
     )
-    
+        
+    arm_joy_controller = Node(
+        package='zenorak_ros2_control',
+        executable='manipulator_joystick.py',
+        name='arm_joy_controller',
+        output='screen'
+    )   
 
 
     
@@ -214,5 +220,6 @@ def generate_launch_description():
         delayed_joint_broad_spawner , # Spawn joint state broadcaster after ros2_control_node starts ,
         delayed_arm_controller_spawner,
         joy_node,
-        teleop_node
+        teleop_node,
+        arm_joy_controller
     ])
