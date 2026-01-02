@@ -1,13 +1,13 @@
-from setuptools import setup, find_packages
-from glob import glob
+from setuptools import setup
 import os
+from glob import glob
 
 package_name = 'servo_service'
 
 setup(
     name=package_name,
     version='0.0.0',
-    packages=find_packages(),
+    packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -19,8 +19,8 @@ setup(
     zip_safe=True,
     maintainer='bargavan',
     maintainer_email='bargavanroboticsengineer@gmail.com',
-    description='Servo control via ROS 2 service using Jetson GPIO PWM',
-    license='Apache License 2.0',
+    description='Servo motor service',
+    license='Apache-2.0',
     entry_points={
         'console_scripts': [
             'servo_node = servo_service.servo_node:main',
