@@ -23,7 +23,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 install(
-  DIRECTORY config description launch 
+  DIRECTORY config description launch meshes
   DESTINATION share/${PROJECT_NAME}
 
 )
