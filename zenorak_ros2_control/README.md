@@ -4,6 +4,8 @@ This document is a concise reference for the `zenorak_ros2_control` package. It 
 
 Keep this README handy when running demos or handing off the code to other team members.
 
+Usb path arduino for the servo and force : lrwxrwxrwx 1 root root 13 Jan  2 18:07 /dev/serial/by-path/platform-3610000.usb-usb-0:2.2.1:1.0 -> ../../ttyACM1
+
 ## Quick summary
 
 - Primary launch file: `launch/launch_robot.launch.py`
