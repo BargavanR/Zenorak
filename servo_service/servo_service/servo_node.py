@@ -4,7 +4,7 @@ from servo_service.srv import SetServoAngle
 import Jetson.GPIO as GPIO
 import time
 
-SERVO_PIN = 33          # PWM pin (change if needed)
+SERVO_PIN = 32          # PWM pin (change if needed)
 PWM_FREQ = 50           # 50Hz for servo
 
 class ServoService(Node):
