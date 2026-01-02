@@ -300,7 +300,7 @@
             <param name="left_wheel_name">front_wheel_left</param>
             <param name="right_wheel_name">front_wheel_right</param>
             <param name="loop_rate">30</param>
-            <param name="device">/dev/ttyACM0</param>
+            <param name="device">/dev/serial/by-path/platform-3610000.usb-usb-0:2.1:1.0</param>
             <param name="baud_rate">115200</param>
             <param name="timeout_ms">1000</param>
             <param name="enc_counts_per_rev">3000</param>
@@ -323,7 +323,7 @@
         <hardware>
             <plugin>zenorak_controller_actuator/Zenorak_Hardware_Actuator</plugin>
             <!-- Wheel/motor parameters removed - only actuator params kept -->
-            <param name="device">/dev/ttyACM1</param>
+            <param name="device">/dev/serial/by-path/platform-3610000.usb-usb-0:2.4:1.0</param>
             <param name="baud_rate">115200</param>
             <param name="timeout_ms">1000</param>
             <!-- enc_counts_per_rev removed -->
