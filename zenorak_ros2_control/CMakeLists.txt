@@ -30,7 +30,8 @@ install(
 install(
   PROGRAMS
     scripts/joy_control.py  # Path to your teleop Python script
-    scripts/manipulator_joystick.py
+    scripts/manipulator_joystick.py 
+    scripts/servo_call.py
   DESTINATION lib/${PROJECT_NAME}  # ROS 2 expects executables here
 )
 

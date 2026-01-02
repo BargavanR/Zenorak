@@ -269,7 +269,7 @@ hardware_interface::return_type Zenorak_Hardware_Actuator::read(
   Actuator_l1.pos = Actuator_l1.potToAngle(
     a1,
     0.0, 80.0,     // logical angle range
-    460, 730       // pot range
+    560, 680       // pot range
   );
   Actuator_l1.vel = (Actuator_l1.pos - prev_pos) / delta_seconds;
 
@@ -279,7 +279,7 @@ hardware_interface::return_type Zenorak_Hardware_Actuator::read(
   Actuator_l2.pos = Actuator_l2.potToAngle(
     a2,
     0.0, 80.0,
-    150, 500
+    160, 500
   );
   Actuator_l2.vel = (Actuator_l2.pos - prev_pos) / delta_seconds;
 
@@ -289,7 +289,7 @@ hardware_interface::return_type Zenorak_Hardware_Actuator::read(
   Actuator_l3.pos = Actuator_l3.potToAngle(
     a3,
     0.0, 80.0,
-    85, 430
+    60, 430
   );
   Actuator_l3.vel = (Actuator_l3.pos - prev_pos) / delta_seconds;
 
@@ -322,19 +322,19 @@ hardware_interface::return_type zenorak_controller_actuator ::Zenorak_Hardware_A
   int a1_target = Actuator_l1.angleToPot(
     Actuator_l1.cmd,
     0.0, 80.0,     // angle range in degrees
-    460, 730        // pot range
+    560, 680        // pot range
   );
 
   int a2_target = Actuator_l2.angleToPot(
     Actuator_l2.cmd,
     0.0, 80.0,
-    150, 500
+    160, 500
   );
 
   int a3_target = Actuator_l3.angleToPot(
     Actuator_l3.cmd,
     0.0, 80.0,
-    85, 430
+    60, 430
   );
   // static double last_a1 = 470, last_a2 = 150, last_a3 = 90;
 
