@@ -203,7 +203,7 @@ def generate_launch_description():
     #     output='screen'
     # )   
     seq_caller=Node(
-        packge='zenorak_ros2_control',
+        package='zenorak_ros2_control',
         executable='joy_control.py',
         name='arm_sequence_controller',
         output='screen'
