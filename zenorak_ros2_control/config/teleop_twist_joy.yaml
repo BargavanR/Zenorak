@@ -6,5 +6,5 @@ teleop_twist_joy:
     axis_angular.yaw: 0
 
     scale_linear.x: 1.7
-    scale_angular.yaw: 10.0
+    scale_angular.yaw: 100.0
     require_enable_button: true
