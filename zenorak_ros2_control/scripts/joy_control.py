@@ -4,39 +4,32 @@ import rclpy
 from rclpy.node import Node
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from control_msgs.msg import JointTrajectoryControllerState
-import time
+from sensor_msgs.msg import Joy
+
+from arm_sequences import EXCAVATION_SEQUENCE, DUMP_SEQUENCE
+
 
 class ArmSequenceController(Node):
+
     def __init__(self):
         super().__init__('arm_sequence_controller')
 
-        # ---- CONFIG ----
         self.joints = ['linkk_1', 'link_2', 'link_3']
         self.tolerance = 10.0  # degrees
 
-        # Sequence in DEGREES
-        self.sequence = [
-            [0.0,45.0,45.0],
-            [0.0, 0.0, 0.0],
-            [80.0, 20.0, 0.0],
-            [80.0, 80.0, 80.0],
-            [0.0,80.0,80.0],
-            [0.0,20.0,0.0],
-            [0.0,45.0,45.0]
-        ]
-
-        
+        self.active_sequence = None
         self.current_step = 0
-        self.current_feedback = None
         self.command_sent = False
+        self.current_feedback = None
 
-        # ---- ROS ----
+        # Publishers
         self.cmd_pub = self.create_publisher(
             JointTrajectory,
             '/arm_trajectory_controller/joint_trajectory',
             10
         )
 
+        # Subscribers
         self.state_sub = self.create_subscription(
             JointTrajectoryControllerState,
             '/arm_trajectory_controller/state',
@@ -44,56 +37,80 @@ class ArmSequenceController(Node):
             10
         )
 
-        self.timer = self.create_timer(0.2, self.update)  # 5 Hz
+        self.joy_sub = self.create_subscription(
+            Joy,
+            '/joy',
+            self.joy_cb,
+            10
+        )
 
-        self.get_logger().info("✅ Arm sequence controller started")
+        self.timer = self.create_timer(0.2, self.update)
+
+        self.get_logger().info("🎮 Arm sequence controller READY")
+
+    # ---------------- CALLBACKS ----------------
 
     def state_cb(self, msg):
-        # Feedback already in DEGREES (as per your system)
         self.current_feedback = msg.actual.positions
 
+    def joy_cb(self, msg):
+        # Button A → Excavation
+        if msg.buttons[0] == 1:
+            self.start_sequence(EXCAVATION_SEQUENCE, "EXCAVATION")
+
+        # Button B → Dump
+        elif msg.buttons[1] == 1:
+            self.start_sequence(DUMP_SEQUENCE, "DUMP")
+
+    # ---------------- CORE LOGIC ----------------
+
+    def start_sequence(self, sequence, name):
+        if self.active_sequence is not None:
+            return  # Ignore if already running
+
+        self.active_sequence = sequence
+        self.current_step = 0
+        self.command_sent = False
+
+        self.get_logger().info(f"▶ {name} sequence started")
+
     def within_tolerance(self, target, actual):
-        for t, a in zip(target, actual):
-            if abs(t - a) > self.tolerance:
-                return False
-        return True
+        return all(abs(t - a) <= self.tolerance for t, a in zip(target, actual))
 
     def send_command(self, target):
         traj = JointTrajectory()
         traj.joint_names = self.joints
 
         pt = JointTrajectoryPoint()
-        pt.positions = target              # DEGREES
-        pt.time_from_start.sec = 2          # smooth move
+        pt.positions = target
+        pt.time_from_start.sec = 2
 
         traj.points = [pt]
         self.cmd_pub.publish(traj)
 
-        self.get_logger().info(
-            f"➡ Sent target (deg): {target}"
-        )
+        self.get_logger().info(f"➡ Command sent: {target}")
 
     def update(self):
-        if self.current_step >= len(self.sequence):
-            self.get_logger().info("✅ Sequence complete (one cycle done)")
+        if self.active_sequence is None:
             return
 
         if self.current_feedback is None:
             return
 
-        target = self.sequence[self.current_step]
+        if self.current_step >= len(self.active_sequence):
+            self.get_logger().info("✅ Sequence completed")
+            self.active_sequence = None
+            return
 
-        # Step 1: send command once
+        target = self.active_sequence[self.current_step]
+
         if not self.command_sent:
             self.send_command(target)
             self.command_sent = True
             return
 
-        # Step 2: wait for convergence
         if self.within_tolerance(target, self.current_feedback):
-            self.get_logger().info(
-                f"✔ Step {self.current_step} reached within ±{self.tolerance}°"
-            )
+            self.get_logger().info(f"✔ Step {self.current_step} reached")
             self.current_step += 1
             self.command_sent = False
 
