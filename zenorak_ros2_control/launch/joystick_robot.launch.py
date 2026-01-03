@@ -196,12 +196,12 @@ def generate_launch_description():
         ]
     )
         
-    # arm_joy_controller = Node(
-    #     package='zenorak_ros2_control',
-    #     executable='manipulator_joystick.py',
-    #     name='arm_joy_controller',
-    #     output='screen'
-    # )   
+    arm_joy_controller = Node(
+        package='zenorak_ros2_control',
+        executable='manipulator_joystick.py',
+        name='arm_joy_controller',
+        output='screen'
+    )   
     seq_caller=Node(
         package='zenorak_ros2_control',
         executable='joy_control.py',
@@ -226,6 +226,6 @@ def generate_launch_description():
         delayed_arm_controller_spawner,
         joy_node,
         teleop_node,
-        # arm_joy_controller
+        arm_joy_controller, 
         seq_caller
     ])
