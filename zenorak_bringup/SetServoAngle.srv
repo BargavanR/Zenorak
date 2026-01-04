@@ -1,0 +1,4 @@
+int32 angle        # 0–180 degrees
+---
+bool success
+string message

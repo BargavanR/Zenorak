@@ -1,16 +1,31 @@
-<?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="zenorak">
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="zenorak_ros2_control"
+    xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Start GZ or Ignition depending on ROS 2 Version -->
+    <xacro:arg name="is_ignition" default="true"/>
+
+    <link name="base_footprint"/>
+    <joint name="base_footprint_part" type="fixed">
+        <origin xyz="-0.4763649 0.3169183 0.179" rpy="0 0 0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+    </joint>
+
+
+    <!-- ================= BASE LINK ================= -->
 
     <link name="base_link">
         <inertial>
-            <origin xyz="0.00169935610472678 -0.0264088300158522 -0.00887384287152697" rpy="0 0 0" />
-            <mass value="53.468367880832" />
-            <inertia ixx="2.31995848291568" ixy="-0.0135330136565553" ixz="0.00962962421966709" iyy="5.75370953859927" iyz="-0.015886629814071" izz="7.30712487101093" />
+            <origin xyz="0.225609050013199 -0.382431512154995 0.110457297768854" rpy="0 0 0" />
+            <mass value="37.6020822567643" />
+            <inertia ixx="0.918856210506479" ixy="-0.0965949212708133" ixz="0.0494096588148494" iyy="3.15876696877023" iyz="0.0144413623668441" izz="3.60003819027792" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/visual/base_link.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/base_link.STL" />
             </geometry>
             <material name="">
                 <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -19,148 +34,330 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/collision/base_link.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/base_link.STL" />
             </geometry>
         </collision>
     </link>
-    <link name="front_left_wheel">
+    <link name="rear_wheel_left_part">
         <inertial>
-            <origin xyz="1.58206781009085E-15 8.04911692853238E-16 0.0547827108814377" rpy="0 0 0" />
-            <mass value="7.16104527274178" />
-            <inertia ixx="0.0473444268968467" ixy="-3.03576608295941E-18" ixz="1.55929200281309E-18" iyy="0.0473444268968467" iyz="2.99484885934959E-19" izz="0.0801617478666343" />
+            <origin xyz="-0.0679260215961148 2.36125695066147E-07 -1.94731959117164E-06" rpy="0 0 0" />
+            <mass value="7.07873349857202" />
+            <inertia ixx="0.080850131713722" ixy="1.35417971474635E-10" ixz="-9.33942895770876E-10" iyy="0.0480312798741648" iyz="5.10051862542479E-08" izz="0.0480308658130902" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/visual/front_left_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/rear_wheel_left_part.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                <color rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
             </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/collision/front_left_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/rear_wheel_left_part.STL" />
             </geometry>
         </collision>
     </link>
-    <joint name="front_left_wheel_joint" type="continuous">
-        <origin xyz="0.23992 -0.26239 -0.15849" rpy="1.5708 -0.1528 0" />
+    <joint name="rear_wheel_left" type="continuous">
+        <origin xyz="-0.112759182276568 -0.562875460951289 -0.0350858656525844" rpy="3.0811708109372 0 1.5707963267949" />
         <parent link="base_link" />
-        <child link="front_left_wheel" />
-        <axis xyz="0 0 1" />
+        <child link="rear_wheel_left_part" />
+        <axis xyz="1 0 0" />
     </joint>
-    <link name="rear_left_wheel">
+    <link name="rear_wheel_right_part">
         <inertial>
-            <origin xyz="6.10622663543836E-15 3.02535774210355E-15 0.0547827108814376" rpy="0 0 0" />
-            <mass value="7.16104527274178" />
-            <inertia ixx="0.0473444268968467" ixy="-5.20417042793042E-18" ixz="-7.65975378716319E-19" iyy="0.0473444268968467" iyz="1.65118432328216E-19" izz="0.0801617478666342" />
+            <origin xyz="0.0703369302084167 -2.36126483657562E-07 -1.94731702234455E-06" rpy="0 0 0" />
+            <mass value="7.07873349872348" />
+            <inertia ixx="0.0808501317144986" ixy="-1.35425404030724E-10" ixz="-9.33943641692648E-10" iyy="0.0480312798744027" iyz="-5.10057398585024E-08" izz="0.0480308658136232" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/visual/rear_left_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/rear_wheel_right_part.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                <color rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
             </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/collision/rear_left_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/rear_wheel_right_part.STL" />
             </geometry>
         </collision>
     </link>
-    <joint name="rear_left_wheel_joint" type="continuous">
-        <origin xyz="-0.3492 -0.26239 -0.15849" rpy="1.5708 -0.82404 0" />
+    <joint name="rear_wheel_right" type="continuous">
+        <origin xyz="-0.112759182276568 -0.0709611226931948 -0.0350858656525845" rpy="-3.0811708109372 0 -1.5707963267949" />
         <parent link="base_link" />
-        <child link="rear_left_wheel" />
-        <axis xyz="0 0 1" />
+        <child link="rear_wheel_right_part" />
+        <axis xyz="-1 0 0" />
     </joint>
-    <link name="front_right_wheel">
+    <link name="front_wheel_left_part">
         <inertial>
-            <origin xyz="8.21565038222616E-15 3.73312492030209E-15 0.0547827108814377" rpy="0 0 0" />
-            <mass value="7.16104527274178" />
-            <inertia ixx="0.0473444268968467" ixy="-1.38777878078145E-17" ixz="-5.7829154300703E-17" iyy="0.0473444268968467" iyz="5.0895068506072E-17" izz="0.0801617478666342" />
+            <origin xyz="-0.0679260215959383 -1.30981837787036E-06 1.46020001273728E-06" rpy="0 0 0" />
+            <mass value="7.07873349856122" />
+            <inertia ixx="0.0808501317136931" ixy="-6.46361672812888E-10" ixz="6.87611674322253E-10" iyy="0.0480310958801467" iyz="2.1197289628086E-07" izz="0.0480310498070746" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/visual/front_right_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/front_wheel_left_part.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                <color rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
             </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/collision/front_right_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/front_wheel_left_part.STL" />
             </geometry>
         </collision>
     </link>
-    <joint name="front_right_wheel_joint" type="continuous">
-        <origin xyz="0.23992 0.20761 -0.15849" rpy="-1.5708 0.70348 0" />
+    <joint name="front_wheel_left" type="continuous">
+        <origin xyz="0.476364897342864 -0.562875460951289 -0.0350858656525772" rpy="-1.93646547797082 0 1.5707963267949" />
         <parent link="base_link" />
-        <child link="front_right_wheel" />
-        <axis xyz="0 0 1" />
+        <child link="front_wheel_left_part" />
+        <axis xyz="1 0 0" />
     </joint>
-    <link name="rear_right_wheel">
+    <link name="front_wheel_right_part">
         <inertial>
-            <origin xyz="5.21804821573824E-15 1.0547118733939E-15 0.0547827108814375" rpy="0 0 0" />
-            <mass value="7.16104527274178" />
-            <inertia ixx="0.0473444268968467" ixy="-3.46944695195361E-18" ixz="1.83167009339647E-17" iyy="0.0473444268968467" iyz="1.33511956035853E-17" izz="0.0801617478666343" />
+            <origin xyz="0.0703369302085943 1.30981749479897E-06 1.46019747881976E-06" rpy="0 0 0" />
+            <mass value="7.07873349871121" />
+            <inertia ixx="0.0808501317144757" ixy="6.4636842171885E-10" ixz="6.87608507579504E-10" iyy="0.0480310958799598" iyz="-2.11972948770123E-07" izz="0.048031049808038" />
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/visual/rear_right_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/front_wheel_right_part.STL" />
             </geometry>
             <material name="">
-                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                <color rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
             </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="file://$(find zenorak_ros2_control)/meshes/collision/rear_right_wheel.STL" />
+                <mesh filename="package://zenorak_ros2_control/meshes/front_wheel_right_part.STL" />
             </geometry>
         </collision>
     </link>
-    <joint name="rear_right_wheel_joint" type="continuous">
-        <origin xyz="-0.3492 0.20761 -0.15849" rpy="-1.5708 -1.1782 0" />
+    <joint name="front_wheel_right" type="continuous">
+        <origin xyz="0.476364897342864 -0.0709611226931948 -0.0350858656525772" rpy="1.93646547797082 0 -1.5707963267949" />
         <parent link="base_link" />
-        <child link="rear_right_wheel" />
-        <axis xyz="0 0 1" />
+        <child link="front_wheel_right_part" />
+        <axis xyz="1 0 0" />
     </joint>
-    <ros2_control name="zenorak_control" type="system">
+
+    <!-- ================= MANIPULATOR ================= -->
+    <!-- (unchanged from your original URDF) -->
+    <xacro:property name="PI" value="3.14159265359" />
+    <xacro:property name="effort" value="30.0" />
+    <xacro:property name="velocity" value="10.0" />
+
+
+
+
+    <link name="manipulator_base_part">
+        <inertial>
+            <origin xyz="0.157263621201152 0.101352922065795 1.87079851471372E-06" rpy="0 0 0"/>
+            <mass value="2.2590906062532"/>
+            <inertia ixx="0.00386029628578382" ixy="0.000859869774009775" ixz="-3.86394674955561E-08" iyy="0.0106698133064369" iyz="-2.29733762474938E-07" izz="0.00878688353686422"/>
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/manipulator_base_part.STL"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.698039215686274 0.698039215686274 0.698039215686274 1"/>
+            </material>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/manipulator_base_part.STL"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="manipulator_base" type="fixed">
+        <origin xyz="0.285562617252501 -0.383543373894075 0.122214368843715" rpy="1.5707963267949 0 0"/>
+        <parent link="base_link"/>
+        <child link="manipulator_base_part"/>
+        <axis xyz="0 0 0"/>
+    </joint>
+
+    <link name="linkk_1_part">
+        <inertial>
+            <origin xyz="0.0967880608316517 0.260782714993558 5.34841523558427E-06" rpy="0 0 0"/>
+            <mass value="0.305707588406735"/>
+            <inertia ixx="0.000992147501244408" ixy="-0.000647770730773342" ixz="-2.09054739391165E-08" iyy="0.00145140179560872" iyz="-5.06820595760279E-11" izz="0.0024124412867919"/>
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/linkk_1_part.STL"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+            </material>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/linkk_1_part.STL"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="linkk_1" type="revolute">
+        <origin xyz="0.201025284688791 0.11855300220073 0" rpy="0 0 -0.285822234578718"/>
+        <parent link="manipulator_base_part"/>
+        <child link="linkk_1_part"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="${0.001}" upper="-${0.8}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+
+    <link name="link_2_part">
+        <inertial>
+            <origin xyz="0.00878775849458302 -0.0734961309869713 2.07355477566118E-07" rpy="0 0 0"/>
+            <mass value="0.175654601701013"/>
+            <inertia ixx="0.000573214810454448" ixy="3.03938118267296E-06" ixz="8.82691411511877E-09" iyy="6.94547105212174E-05" iyz="9.92533331171933E-08" izz="0.000603952650743279"/>
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/link_2_part.STL"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+            </material>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/link_2_part.STL"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- CHANGED: continuous -> revolute + limits -->
+    <joint name="link_2" type="revolute">
+        <origin xyz="0.344393779505362 0.432597470756819 0" rpy="0 0 1.10459913734809"/>
+        <parent link="linkk_1_part"/>
+        <child link="link_2_part"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="${0.195}" upper="-${1.129}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+
+    <link name="link_3_part">
+        <inertial>
+            <origin xyz="1.89394355052941E-05 -0.0795967370189372 0.0218929431451993" rpy="0 0 0"/>
+            <mass value="1.1744727454073"/>
+            <inertia ixx="0.00484793799004943" ixy="1.17794795886547E-05" ixz="-2.18730896944459E-06" iyy="0.00375075117692043" iyz="0.000976756611162925" izz="0.00268332926347022"/>
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/link_3_part.STL"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.298039215686275 0.298039215686275 0.298039215686275 1"/>
+            </material>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://zenorak_ros2_control/meshes/link_3_part.STL"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- CHANGED: continuous -> revolute + limits -->
+    <joint name="link_3" type="revolute">
+        <origin xyz="0 -0.291104719303414 0" rpy="2.3649900417239 -1.5707963267949 0"/>
+        <parent link="link_2_part"/>
+        <child link="link_3_part"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-${1.25664}" upper="-${2.87979}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+
+
+    <ros2_control name="zenorak_motor_hw" type="system">
         <hardware>
-            <plugin>diffdrive_arduino/DiffDriveArduinoHardware</plugin>
-            <param name="left_wheel_name">front_left_wheel</param>
-            <param name="right_wheel_name">front_right_wheel</param>
+            <plugin>zenorak_controller_motor/Zenorak_Hardware_Motor</plugin>
+            <param name="left_wheel_name">front_wheel_left</param>
+            <param name="right_wheel_name">front_wheel_right</param>
             <param name="loop_rate">30</param>
-            <param name="device">/dev/ttyACM0</param>
-            <param name="baud_rate">57600</param>
+            <param name="device">/dev/serial/by-path/platform-3610000.usb-usb-0:2.1:1.0</param>
+            <param name="baud_rate">115200</param>
             <param name="timeout_ms">1000</param>
-            <param name="enc_counts_per_rev">3436</param>
+            <param name="enc_counts_per_rev">3000</param>
         </hardware>
-        <joint name="front_left_wheel">
+
+        <!-- define the two wheel joints and their interfaces -->
+        <joint name="front_wheel_left">
+            <command_interface name="velocity"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
-            <command_interface name="velocity">
-                <param name="min">-10</param>
-                <param name="max">10</param>
-            </command_interface>
         </joint>
-        <joint name="front_right_wheel">
+        <joint name="front_wheel_right">
+            <command_interface name="velocity"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
-            <command_interface name="velocity">
-                <param name="min">-10</param>
-                <param name="max">10</param>
-            </command_interface>
+        </joint>
+
+    </ros2_control>
+    <ros2_control name="zenorak_actuator_hw" type="system">
+        <hardware>
+            <plugin>zenorak_controller_actuator/Zenorak_Hardware_Actuator</plugin>
+            <!-- Wheel/motor parameters removed - only actuator params kept -->
+            <param name="device">/dev/serial/by-path/platform-3610000.usb-usb-0:2.4:1.0</param>
+            <param name="baud_rate">115200</param>
+            <param name="timeout_ms">1000</param>
+            <!-- enc_counts_per_rev removed -->
+            <param name="pid_p">20</param>
+            <param name="pid_d">12</param>
+            <param name="pid_i">0</param>
+            <param name="pid_o">50</param>
+            <!-- Manipulator link names and encoder/ADC mapping values -->
+            <!-- Use macro parameters so these names are available when the macro is instantiated -->
+            <param name="link1_name">linkk_1</param>
+            <param name="link2_name">link_2</param>
+            <param name="link3_name">link_3</param>
+            <!-- counts per revolution or ADC full-scale mapping used by Actuator.setup -->
+            <param name="link1_enc_val">1023</param>
+            <param name="link2_enc_val">1023</param>
+            <param name="link3_enc_val">1023</param>
+        </hardware>
+        <!-- Wheel joints removed from ros2_control description; only manipulator joints exported -->
+
+        <!-- Manipulator joints: these should match the joint names in your robot description/xacro -->
+        <joint name="linkk_1">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="link_2">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="link_3">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
         </joint>
     </ros2_control>
+
 </robot>

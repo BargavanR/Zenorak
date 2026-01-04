@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(zenorak_ros2_control)
+project(servo_service)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,6 +10,8 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -22,17 +24,13 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-install(
-  DIRECTORY config description launch meshes
-  DESTINATION share/${PROJECT_NAME}
-
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/SetServoAngle.srv"
 )
+
 install(
-  PROGRAMS
-    scripts/joy_control.py  # Path to your teleop Python script
-    scripts/manipulator_joystick.py 
-    scripts/servo_call.py
-  DESTINATION lib/${PROJECT_NAME}  # ROS 2 expects executables here
+  PROGRAMS src/servo_node.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
